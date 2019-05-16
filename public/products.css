@@ -1,0 +1,15 @@
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*:after {
+    box-sizing: inherit;
+}
+
+html,body {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 255, 0.568);
+}
