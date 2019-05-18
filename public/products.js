@@ -1,5 +1,9 @@
-// 'use strict';
+'use strict';
 
+// import format from "format-number";
+// import {format} from "/modules/format-number.js"
+
+// var format = require("./format")
 class ProductList extends React.Component {
     constructor(props){
         super(props);
@@ -7,15 +11,12 @@ class ProductList extends React.Component {
             faces: [],
             page: 1,
             loading: false,
-            prevY: 0,
-            size: 1,
-            id: 1,
-            price: 0
+            prevY: 0
         } 
     }
 
 componentDidMount() {
-    this.getResult(this.state.page);
+    this.getfaces(this.state.page);
     
     //options
     let options = {
@@ -39,84 +40,107 @@ componentDidMount() {
 handleObserver( entities, observer) {
     const y = entities[0].boundingClientRect.y;
     if (this.state.prevY > y) {
-        const lastFace = this.state.page + 1
-        console.log(lastFace)
-        const curPage = lastFace;
-        this.getResult(curPage);
-        this.setState({ page: curPage })
+        const nextPage = this.state.page + 1
+        const currentPage = nextPage;
+        this.getfaces(currentPage);
+        this.setState({ page: currentPage })
     }
     this.setState({ prevY: y });
 }
+
+
     
-    getResult =  async (page) => {
+    getfaces =  async (page) => {
         this.setState({ loading: true })
-        // console.log(page)
         const response = await axios.get("http://localhost:3000/products?",{
              params: {
                  _page: page,
                  _limit: 15
              }
          })
+        //  console.log(response)
             this.setState({faces: [...this.state.faces, ...response.data]})
             this.setState({ loading: false })
         }
     
+    // sortHandler = async (size, price, id) => {
+    //     this.setState({ loading: true })
+    //     const response = await axios.get("http://localhost:3000/products?",{
+    //          params: {
+    //              _sort: size || price || id,
+    //              _limit: 15
+    //          }
+    //      })
+    //      this.setState({faces: [...this.state.faces, ...response.data]})
+    //      this.setState({ loading: false })
+    // }
 
 
-    setSizeHandler = (e) => {
-        this.setState({size: e.target.value})
-    }
+    
 
-    setPriceHandler = e => {
-        this.setState({price: e.target.value})
-    }
+    
 
     setIdHandler = e => {
-        this.setState({id: e.target.value})
+        this.setState({id: "id"})
     }
-            
+
+    // // Helper function to render adverts
+    // renderAdverts = () => {
+           
+    //     {this.state.faces.length % 20 === 0 ? 
+    //         <img className="ad" src={`/ads/?r=${randomNumber} + `}/> :
+    //         null
+    //         }
+        
+    // };
+      
+    // Helper function to render faces
     renderContent = () => {
         console.log(this.state.faces)
        return this.state.faces.map(face => {
             return (
-                <div key={face.id} className="card__items">{face.face}</div>
+                <div 
+                    key={face.id} 
+                    className="card"
+                >
+                    <div className="card__items">{face.face}</div>
+                <div className="card__details">
+                    <p>{`size: ${face.size}px`}</p>
+                    <p>{`price: $${(face.price/100).toFixed(2)}`}</p>
+                    <p>{face.date}</p>
+                </div>
+                </div>
             )
         })
+        
     }
     render() {
+        const randomNumber = Math.floor(Math.random() * 1000)
         const loadingfaces = { display: this.state.loading ? "block" : "none"}
+        const loadingAdverts = { display: this.state.faces.length % 20 === 0 ? "block" : "none"}
     return(
         <div className="container">
-        <span>
-        <input 
-            onChange={this.setSizeHandler}
-            className="field size__field" 
-            placeholder="Enter Size in pixels" 
-            data-target="size" 
-            value={this.state.size}
-        />
-        <input 
-            onChange={this.setPriceHandler}
-            className="field price__field"  
-            placeholder="Enter Price" 
-            data-target="price" 
-            value={this.state.price}
-        />
-        <input 
-            onChange={this.setIdHandler}
-            className="field id__field" 
-            placeholder="Enter Id" 
-            data-target="id"
-            value={this.state.id}
-        />
-        </span>
         <div className="cards">
             {this.renderContent()}
         </div>
-        <div ref={loadingRef => (this.loadingRef = loadingRef)} style={{"height": "100px", "margin": "1rem"}}>
-            <span style={loadingfaces}>Loading...</span>
+        <img className={loadingAdverts} src={`/ads/?r=${randomNumber} + `}/>
+        <div 
+            ref={loadingRef => (this.loadingRef = loadingRef)}
+            style={{"height": "100px", "margin": "1rem"}}
+        >
+            <span className="loading" style={loadingfaces}>
+                <h1>
+                    <span>L</span>
+                    <span>o</span>
+                    <span>a</span>
+                    <span>d</span>
+                    <span>i</span>
+                    <span>n</span>
+                    <span>g</span>
+                </h1>
+            </span>
         </div>
-        {this.state.faces.length === 500 ? <p>End of Catalogue</p> : null}
+        {this.state.faces.length === 500 ? <p className="end">End of Catalogue</p> : null}
         </div>
     )
     }
