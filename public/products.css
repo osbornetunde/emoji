@@ -59,6 +59,18 @@ p {
     box-shadow: 1px 1px 2px 2px #f7f1e3;
 }
 
+.options {
+    display: grid;
+    place-items: center;
+
+}
+
+.options>span {
+    color: #fff;
+    font-weight: 900;
+    font-size: 2rem;
+}
+
 .field {
     width: 15rem;
     height: 2rem;
