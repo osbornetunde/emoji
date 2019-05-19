@@ -1,3 +1,11 @@
+
+Instruction:
+---First run "npm install" to install the necessary libraries
+---You can start the program with "npm start" on your terminal
+
+
+
+
 Products Grid
 ====
 

@@ -1,9 +1,6 @@
 'use strict';
 
-// import format from "format-number";
-// import {format} from "/modules/format-number.js"
 
-// var format = require("./format")
 class ProductList extends React.Component {
     constructor(props){
         super(props);
@@ -66,9 +63,41 @@ handleObserver( entities, observer) {
             this.setState({ loading: false })
             this.setState({ sorting: false })
         }
+
+    //converts the time to relative time
+    displayRelativeTime = (previous) => {
+
+    const minute = 60 * 1000;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const month = day * 30;
+    const year = day * 365;
     
+    //finds the difference between the current time and the time the emoji was created
+    const timeDifference = new Date().getTime() - new Date(previous).getTime();
+
+    
+    if (timeDifference < minute) 
+         return Math.round(timeDifference/1000) + ' seconds ago';   
+    
+    else if (timeDifference < hour) 
+         return Math.round(timeDifference/minute) + ' minutes ago';   
+
+    else if (timeDifference < day ) 
+         return Math.round(timeDifference/hour ) + ' hours ago';   
+    
+    else if (timeDifference < month) 
+        return Math.round(timeDifference/day) + ' days ago';   
+
+    else if (timeDifference < year) 
+        return Math.round(timeDifference/month) + ' months ago';   
+
+    else 
+        return Math.round(timeDifference/year ) + ' years ago';   
+    
+}
+
     setSortHandler = (e) => {
-        
         this.setState({ faces: [] })
         this.setState({ sorting: true })
         this.setState({ sort: e.target.value })
@@ -78,7 +107,8 @@ handleObserver( entities, observer) {
     // Helper function to render adverts
     renderAdverts = () => {
         const randomNumber = Math.floor(Math.random() * 1000)
-        {this.state.faces.length % 20 === 0 ? 
+        {this.state.faces.length > 0 && 
+            this.state.faces.length % 20 === 0 ? 
             <img className="ad" src={`/ads/?r=${randomNumber} + `}/> :
             null
             }
@@ -96,9 +126,9 @@ handleObserver( entities, observer) {
                 >
                 <div className="card__items">{face.face}</div>
                 <div className="card__details">
-                    <p>{`size: ${face.size}px`}</p>  {/*add pixels to the size*/}
-                    <p>{`price: $${(face.price/100).toFixed(2)}`}</p>  {/*formats the price to 2 decimal places*/}
-                    <p>{face.date}</p>
+                    <p>{`Size: ${face.size}px`}</p>  {/*add pixels to the size*/}
+                    <p>{`Price: $${(face.price/100).toFixed(2)}`}</p>  {/*formats the price to 2 decimal places*/}
+                    <p>{`Date: ${this.displayRelativeTime(face.date)}`}</p>
                 </div>
                 </div>
             )
